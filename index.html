@@ -1,1 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickMatch Pro - Sports Utility Hub</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --accent: #3b82f6;
+            --league-color: #7c3aed;
+            --bench-color: #ea580c;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 40px;
+        }
+        .header-nav {
+            background-color: var(--primary);
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .nav-tab.active {
+            background: white;
+            color: var(--primary);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .app-title-section {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .app-title {
+            color: var(--primary);
+            margin: 10px 0 2px 0;
+            font-size: 26px;
+            font-weight: 800;
+        }
+        .app-subtitle {
+            color: #6b7280;
+            margin: 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .adsense-placeholder {
+            background: #e5e7eb;
+            color: #6b7280;
+            text-align: center;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        /* Ergonomic Action Buttons Bundle */
+        .action-buttons-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.1s, filter 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-primary { background-color: var(--secondary); color: white; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-toggle { background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; padding: 8px 12px; font-size: 13px; font-weight: 600; border-radius: 6px; width: auto; margin-top: 10px; box-shadow: none;}
+        .btn-league-save { background-color: var(--league-color); color: white; padding: 10px 16px; font-size: 14px; border-radius: 6px; width: auto; box-shadow: none; margin-top: 10px;}
+        .btn-fill { background-color: var(--secondary); color: white; padding: 10px 16px; font-size: 14px; border-radius: 6px; width: 100%; box-shadow: none; margin-top: 10px;}
+        
+        /* Court Cards Layout */
+        .court-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .court-card.social { border-left: 5px solid var(--accent); }
+        .court-card.league { border-left: 5px solid var(--league-color); background-color: #faf5ff; }
+        .court-card.vacant { border-left: 5px solid #d1d5db; background-color: #fcfcfc; }
+        
+        .court-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .court-title { font-weight: 800; font-size: 16px; color: var(--primary); }
+        .court-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-social { background: #e0f2fe; color: #0369a1; }
+        .badge-league { background: #f3e8ff; color: #6b21a8; }
+        .badge-vacant { background: #f3f4f6; color: #4b5563; }
+        
+        .player-line { font-size: 15px; margin: 4px 0; font-weight: 500; }
+        .player-stats { font-size: 11px; color: #6b7280; margin-top: 10px; border-top: 1px dashed #e5e7eb; padding-top: 6px;}
+        
+        /* Asynchronous Notification Alert Windows */
+        .alert-window {
+            background-color: #ecfdf5;
+            border: 1px dashed #10b981;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        .alert-title { font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 3px;}
+        
+        /* Bench Card styling */
+        .bench-card { border-left: 5px solid var(--bench-color); background-color: #fffaf7; }
+        .bench-title { color: var(--bench-color); font-weight: 800; }
+        .bench-list { font-size: 14px; font-weight: 600; color: #374151; }
 
+        /* Score inputs layout */
+        .score-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        .score-input-box { width: 55px !important; text-align: center; padding: 6px !important; font-size: 16px; font-weight: 700;}
+
+        /* Live log table structures */
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .log-table th {
+            text-align: left;
+            padding: 8px;
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+        }
+        .log-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+        .score-pill {
+            background: #f3e8ff;
+            color: var(--league-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* Toast Popup Visual Confirmation Engine */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #065f46;
+            color: #ffffff;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2), 0 8px 10px -6px rgba(0,0,0,0.2);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            opacity: 0;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show {
+            bottom: 40px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <button class="nav-tab active" onclick="switchTab('mixer')">👥 Session Court Mixer</button>
+        <button class="nav-tab" onclick="switchTab('logs')">📊 Dynamic Live Match Log</button>
+    </div>
+
+    <div id="toastNotification" class="toast">✓ Match Saved to Log!</div>
+
+    <div class="container">
+        
+        <div class="app-title-section">
+            <h1 class="app-title">QuickMatch Pro</h1>
+            <p class="app-subtitle">Smart Social Sports Rotation & Asynchronous Fair Mixer</p>
+        </div>
+
+        <div class="adsense-placeholder">[ ADSENSE DISPLAY AD UNIT ]</div>
+
+        <div id="mixerSection" class="view-section active">
+            
+            <div class="card">
+                <div class="form-group">
+                    <label for="courtCount">Number of Available Courts:</label>
+                    <input type="number" id="courtCount" value="6" min="1" max="20">
+                </div>
+                <div class="form-group">
+                    <label for="playerNames">Player Names (One per line):</label>
+                    <textarea id="playerNames" placeholder="Keith&#10;Mario&#10;Mark&#10;Paul"></textarea>
+                </div>
+                
+                <div class="action-buttons-stack">
+                    <button class="btn btn-primary" onclick="generateSocialRound()">Generate Next Social Round</button>
+                    <button class="btn btn-danger" onclick="triggerProtectedReset()">Reset Session</button>
+                </div>
+            </div>
+
+            <div class="adsense-placeholder">[ ADSENSE DISPLAY AD UNIT ]</div>
+
+            <div id="asyncWindowContainer"></div>
+
+            <div class="card">
+                <h3 style="margin-top:0; margin-bottom:15px; font-size:18px; font-weight:800;">Current Assignments</h3>
+                <p style="font-size:12px; color:#6b7280; margin-top:-10px; margin-bottom:15px;">Toggle a court to League Mode to lock players into a full match. Generating next round will automatically bypass them.</p>
+                <div id="courtsContainer"></div>
+            </div>
+
+            <div id="benchContainer"></div>
+        </div>
+
+        <div id="logsSection" class="view-section">
+            <div class="card">
+                <h3 style="margin-top:0; font-size:18px; font-weight:800;">Complete Session Event Log</h3>
+                <div style="overflow-x:auto;">
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Court</th>
+                                <th>Matchup</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fullLogTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align:center; color:#9ca3af; padding:20px;">No matches logged in this session yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="bottomLogPreviewCard" class="card" style="margin-top:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3 style="margin:0; font-size:16px; font-weight:800;">📊 Current Live Session Match Log</h3>
+            </div>
+            <p style="font-size:12px; color:#6b7280; margin-top:0; margin-bottom:10px;">Saved instantly to device storage. Updates the seasonal tables on-the-fly dynamically.</p>
+            <div style="overflow-x:auto;">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Court</th>
+                            <th>Matchup</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quickLogTableBody">
+                        <tr>
+                            <td colspan="4" style="text-align:center; color:#9ca3af; padding:15px;">No league matches logged yet tonight.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Core System State
+        let sessionState = {
+            players: [],
+            courts: [],
+            matchHistory: []
+        };
+
+        // UI View Tab Swapping
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            
+            if(tabName === 'mixer') {
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                document.getElementById('mixerSection').classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-tab')[1].classList.add('active');
+                document.getElementById('logsSection').classList.add('active');
+            }
+        }
+
+        // BACKGROUND MEMORY INITIALIZATION (Fruit 3)
+        window.addEventListener('DOMContentLoaded', () => {
+            const storedNames = localStorage.getItem('courtMixerPersistentPlayers');
+            if (storedNames) {
+                document.getElementById('playerNames').value = storedNames;
+                syncPlayersFromInput();
+            }
+        });
+
+        // Listen for typing inputs to preserve roster text seamlessly
+        document.getElementById('playerNames').addEventListener('input', (e) => {
+            localStorage.setItem('courtMixerPersistentPlayers', e.target.value);
+            syncPlayersFromInput();
+        });
+
+        function syncPlayersFromInput() {
+            const rawText = document.getElementById('playerNames').value;
+            const names = rawText.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+            
+            // Keep old metrics if names match, add new arrivals
+            let updatedPlayers = [];
+            names.forEach(name => {
+                let existing = sessionState.players.find(p => p.name === name);
+                if(existing) {
+                    updatedPlayers.push(existing);
+                } else {
+                    updatedPlayers.push({ name: name, roundsPlayed: 0, consecutiveSits: 0 });
+                }
+            });
+            sessionState.players = updatedPlayers;
+            renderBench();
+        }
+
+        // FAT-FINGER PROTECTION DISPATCHER (Fruit 1)
+        function triggerProtectedReset() {
+            const confirmation = confirm("⚠️ SAFETY CHECK:\nAre you sure you want to clear this entire session?\n\nThis will wipe out all active courts, bench calculations, and log tables permanently.");
+            if (confirmation) {
+                sessionState.courts = [];
+                sessionState.matchHistory = [];
+                sessionState.players.forEach(p => {
+                    p.roundsPlayed = 0;
+                    p.consecutiveSits = 0;
+                });
+                renderCourts();
+                renderBench();
+                renderLogs();
+                triggerVisualToast("🗑️ Session Cleared Completely");
+            }
+        }
+
+        // VISUAL TOAST ENGAGEMENT ENGINE (Fruit 2)
+        function triggerVisualToast(message) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        // Fair Asynchronous Matchmaking Compiler Engine
+        function generateSocialRound() {
+            syncPlayersFromInput();
+            const totalCourts = parseInt(document.getElementById('courtCount').value) || 1;
+            
+            if(sessionState.players.length < 4) {
+                alert("Please enter at least 4 players.");
+                return;
+            }
+
+            // Establish current running court array structures if empty
+            if(sessionState.courts.length !== totalCourts) {
+                let newCourts = [];
+                for(let i=1; i<=totalCourts; i++) {
+                    let oldCourt = sessionState.courts.find(c => c.id === i);
+                    if(oldCourt) {
+                        newCourts.push(oldCourt);
+                    } else {
+                        newCourts.push({ id: i, type: 'vacant', players: [] });
+                    }
+                }
+                sessionState.courts = newCourts;
+            }
+
+            // Identify which players are locked inside a running League Match
+            let lockedPlayerNames = new Set();
+            sessionState.courts.forEach(c => {
+                if(c.type === 'league') {
+                    c.players.forEach(p => lockedPlayerNames.add(p.name));
+                }
+            });
+
+            // Gather the available pool of free players
+            let freePlayers = sessionState.players.filter(p => !lockedPlayerNames.add(p.name));
+            // Reset standard set for evaluation validation safety
+            lockedPlayerNames.clear();
+            sessionState.courts.forEach(c => {
+                if(c.type === 'league') c.players.forEach(p => lockedPlayerNames.add(p.name));
+            });
+            freePlayers = sessionState.players.filter(p => !lockedPlayerNames.has(p.name));
+
+            // Core Rotation Algorithm Sort Logic Priorities: 
+            // 1st: Most consecutive sitting periods (Desending)
+            // 2nd: Fewest total session games played (Ascending)
+            freePlayers.sort((a, b) => {
+                if(b.consecutiveSits !== a.consecutiveSits) {
+                    return b.consecutiveSits - a.consecutiveSits;
+                }
+                return a.roundsPlayed - b.roundsPlayed;
+            });
+
+            // Populate all non-league courts asynchronously
+            sessionState.courts.forEach(c => {
+                if(c.type !== 'league') {
+                    if(freePlayers.length >= 4) {
+                        c.type = 'social';
+                        c.players = freePlayers.splice(0, 4);
+                        c.players.forEach(p => {
+                            p.roundsPlayed += 1;
+                            p.consecutiveSits = 0;
+                        });
+                    } else {
+                        c.type = 'vacant';
+                        c.players = [];
+                    }
+                }
+            });
+
+            // Accumulate consecutive sit records for everyone left sitting out on the bench
+            freePlayers.forEach(p => {
+                p.con
