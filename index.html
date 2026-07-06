@@ -112,7 +112,6 @@
             resize: vertical;
             min-height: 120px;
         }
-        /* Ergonomic Action Buttons Bundle */
         .action-buttons-stack {
             display: flex;
             flex-direction: column;
@@ -143,7 +142,6 @@
         .btn-league-save { background-color: var(--league-color); color: white; padding: 10px 16px; font-size: 14px; border-radius: 6px; width: auto; box-shadow: none; margin-top: 10px;}
         .btn-fill { background-color: var(--secondary); color: white; padding: 10px 16px; font-size: 14px; border-radius: 6px; width: 100%; box-shadow: none; margin-top: 10px;}
         
-        /* Court Cards Layout */
         .court-card {
             background: white;
             border: 1px solid #e5e7eb;
@@ -180,7 +178,6 @@
         .player-line { font-size: 15px; margin: 4px 0; font-weight: 500; }
         .player-stats { font-size: 11px; color: #6b7280; margin-top: 10px; border-top: 1px dashed #e5e7eb; padding-top: 6px;}
         
-        /* Asynchronous Notification Alert Windows */
         .alert-window {
             background-color: #ecfdf5;
             border: 1px dashed #10b981;
@@ -193,12 +190,10 @@
         }
         .alert-title { font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 3px;}
         
-        /* Bench Card styling */
         .bench-card { border-left: 5px solid var(--bench-color); background-color: #fffaf7; }
         .bench-title { color: var(--bench-color); font-weight: 800; }
         .bench-list { font-size: 14px; font-weight: 600; color: #374151; }
 
-        /* Score inputs layout */
         .score-row {
             display: flex;
             align-items: center;
@@ -211,7 +206,6 @@
         }
         .score-input-box { width: 55px !important; text-align: center; padding: 6px !important; font-size: 16px; font-weight: 700;}
 
-        /* Live log table structures */
         .log-table {
             width: 100%;
             border-collapse: collapse;
@@ -241,7 +235,6 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* Toast Popup Visual Confirmation Engine */
         .toast {
             position: fixed;
             bottom: -100px;
@@ -367,14 +360,12 @@
     </div>
 
     <script>
-        // Core System State
         let sessionState = {
             players: [],
             courts: [],
             matchHistory: []
         };
 
-        // UI View Tab Swapping
         function switchTab(tabName) {
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
@@ -388,7 +379,6 @@
             }
         }
 
-        // BACKGROUND MEMORY INITIALIZATION (Fruit 3)
         window.addEventListener('DOMContentLoaded', () => {
             const storedNames = localStorage.getItem('courtMixerPersistentPlayers');
             if (storedNames) {
@@ -397,7 +387,6 @@
             }
         });
 
-        // Listen for typing inputs to preserve roster text seamlessly
         document.getElementById('playerNames').addEventListener('input', (e) => {
             localStorage.setItem('courtMixerPersistentPlayers', e.target.value);
             syncPlayersFromInput();
@@ -407,7 +396,6 @@
             const rawText = document.getElementById('playerNames').value;
             const names = rawText.split('\n').map(n => n.trim()).filter(n => n.length > 0);
             
-            // Keep old metrics if names match, add new arrivals
             let updatedPlayers = [];
             names.forEach(name => {
                 let existing = sessionState.players.find(p => p.name === name);
@@ -421,7 +409,6 @@
             renderBench();
         }
 
-        // FAT-FINGER PROTECTION DISPATCHER (Fruit 1)
         function triggerProtectedReset() {
             const confirmation = confirm("⚠️ SAFETY CHECK:\nAre you sure you want to clear this entire session?\n\nThis will wipe out all active courts, bench calculations, and log tables permanently.");
             if (confirmation) {
@@ -438,7 +425,6 @@
             }
         }
 
-        // VISUAL TOAST ENGAGEMENT ENGINE (Fruit 2)
         function triggerVisualToast(message) {
             const toast = document.getElementById('toastNotification');
             toast.textContent = message;
@@ -448,7 +434,6 @@
             }, 2200);
         }
 
-        // Fair Asynchronous Matchmaking Compiler Engine
         function generateSocialRound() {
             syncPlayersFromInput();
             const totalCourts = parseInt(document.getElementById('courtCount').value) || 1;
@@ -458,7 +443,6 @@
                 return;
             }
 
-            // Establish current running court array structures if empty
             if(sessionState.courts.length !== totalCourts) {
                 let newCourts = [];
                 for(let i=1; i<=totalCourts; i++) {
@@ -472,7 +456,6 @@
                 sessionState.courts = newCourts;
             }
 
-            // Identify which players are locked inside a running League Match
             let lockedPlayerNames = new Set();
             sessionState.courts.forEach(c => {
                 if(c.type === 'league') {
@@ -480,18 +463,13 @@
                 }
             });
 
-            // Gather the available pool of free players
             let freePlayers = sessionState.players.filter(p => !lockedPlayerNames.add(p.name));
-            // Reset standard set for evaluation validation safety
             lockedPlayerNames.clear();
             sessionState.courts.forEach(c => {
                 if(c.type === 'league') c.players.forEach(p => lockedPlayerNames.add(p.name));
             });
             freePlayers = sessionState.players.filter(p => !lockedPlayerNames.has(p.name));
 
-            // Core Rotation Algorithm Sort Logic Priorities: 
-            // 1st: Most consecutive sitting periods (Desending)
-            // 2nd: Fewest total session games played (Ascending)
             freePlayers.sort((a, b) => {
                 if(b.consecutiveSits !== a.consecutiveSits) {
                     return b.consecutiveSits - a.consecutiveSits;
@@ -499,7 +477,6 @@
                 return a.roundsPlayed - b.roundsPlayed;
             });
 
-            // Populate all non-league courts asynchronously
             sessionState.courts.forEach(c => {
                 if(c.type !== 'league') {
                     if(freePlayers.length >= 4) {
@@ -516,6 +493,39 @@
                 }
             });
 
-            // Accumulate consecutive sit records for everyone left sitting out on the bench
             freePlayers.forEach(p => {
-                p.con
+                p.consecutiveSits += 1;
+            });
+
+            renderCourts();
+            renderBench();
+            renderAsyncAlertWindow();
+        }
+
+        function renderAsyncAlertWindow() {
+            const container = document.getElementById('asyncWindowContainer');
+            container.innerHTML = "";
+
+            let vacantCount = sessionState.courts.filter(c => c.type === 'vacant').length;
+            let benchCount = sessionState.players.filter(p => {
+                return !sessionState.courts.some(c => c.players.some(cp => cp.name === p.name));
+            }).length;
+
+            if(vacantCount > 0 && benchCount >= 4) {
+                container.innerHTML = `
+                    <div class="alert-window">
+                        <div class="alert-title">💡 Asynchronous Time Interest Window Available:</div>
+                        League match finished early. You can dispatch waiting bench players out immediately to tap short game interest cycles.
+                    </div>
+                `;
+            }
+        }
+
+        function toggleLeagueMode(courtId) {
+            let court = sessionState.courts.find(c => c.id === courtId);
+            if(!court || court.type === 'vacant') return;
+
+            if(court.type === 'social') {
+                court.type = 'league';
+            } else {
+                c
